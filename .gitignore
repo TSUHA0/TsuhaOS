@@ -1,2 +1,2 @@
-src/boot.bin
+src/*.bin
 src/master.img

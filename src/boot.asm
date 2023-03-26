@@ -18,12 +18,17 @@ call print
 xchg bx, bx
 
 mov edi, 0x1000 ; 读取的目标内存
-mov ecx, 0 ; 起始扇区
-mov bl, 1 ; 扇区数量
+mov ecx, 2 ; 起始扇区
+mov bl, 4 ; 扇区数量
 
 call read_disk
 
 xchg bx, bx
+
+cmp word [0x1000], 0x55ba
+jnz error
+
+jmp 0:0x1002
 
 ; 阻塞
 jmp $ 
@@ -109,6 +114,13 @@ print:
 	jmp .next
 .done:
 	ret
+
+error:
+	mov si, .error_msg
+	call print
+	hlt
+	.error_msg: 
+		db "load error...", 13, 10, 0
 
 booting:
 	db "TsuhaOS booting...", 13, 10, 0
