@@ -12,14 +12,26 @@ mov es, ax
 mov ss, ax
 mov sp, 0x7c00 ;程序指针
 
-
-; 0xb800 文本显示的内存区域，从这里开始显示文本
-mov ax, 0xb800
-mov ds, ax
-mov byte [0], 'H'
+mov si, booting
+call print
 
 ; 阻塞
 jmp $ 
+
+print:
+	mov ah, 0x0e
+.next:
+	mov al, [si]
+	cmp al, 0
+	jz .done
+	int 0x10
+	inc si
+	jmp .next
+.done:
+	ret
+
+booting:
+	db "TsuhaOS booting...", 13, 10, 0
 
 ; 0 填充剩余区域
 times 510 - ($ - $$) db 0
